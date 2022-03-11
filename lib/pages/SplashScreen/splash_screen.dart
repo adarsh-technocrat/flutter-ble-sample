@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_ble_sample/components/bluetooth_on_of_layout.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import '../HomeScreen/home_screen.dart';
 
@@ -25,13 +26,15 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-        body: Center(
-      child: SizedBox(
-          width: 250,
-          child: SpinKitCircle(
-            color: Colors.black,
-          )),
-    ));
+    return const BluetoothOnOfLayout(
+      child: Scaffold(
+          body: Center(
+        child: SizedBox(
+            width: 250,
+            child: SpinKitCircle(
+              color: Colors.black,
+            )),
+      )),
+    );
   }
 }
