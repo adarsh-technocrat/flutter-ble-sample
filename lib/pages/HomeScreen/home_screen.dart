@@ -1,9 +1,13 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_ble_sample/bloc/BleDeviceBloc/ble_device_cubit.dart';
 import 'package:flutter_ble_sample/bloc/BleDeviceBloc/ble_device_state.dart';
+import 'package:flutter_ble_sample/components/battery_level_indecator.dart';
 import 'package:flutter_ble_sample/components/bluetooth_on_of_layout.dart';
+import 'package:flutter_ble_sample/components/cloud_sync_battery_level_card.dart';
 import 'package:flutter_ble_sample/pages/BluetoothScanScreen/bluetooth_scan_screen.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:jiffy/jiffy.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -13,6 +17,13 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  @override
+  void dispose() {
+    final provider = BlocProvider.of<BleDeviceCubit>(context);
+    provider.disposeTimerInstance();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<BleDeviceCubit, BleDeviceState>(
@@ -31,7 +42,7 @@ class _HomeScreenState extends State<HomeScreen> {
               actions: [
                 IconButton(
                   onPressed: () {
-                    provider.notifyBatteryLevels();
+                    provider.syncBatteryLevelsToCloud(context);
                   },
                   icon: const Icon(
                     Icons.cloud_sync_outlined,
@@ -59,81 +70,65 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    state.services.isNotEmpty
-                        ? Center(
-                            child: Padding(
-                              padding: const EdgeInsets.all(50.0),
-                              child: StreamBuilder<List<int>>(
-                                  stream: state
-                                      .services[2].characteristics[0].value,
-                                  initialData: state
-                                      .services[2].characteristics[0].lastValue,
-                                  builder: (context, snapshot) {
-                                    final value = snapshot.data!.isEmpty
-                                        ? 0
-                                        : snapshot.data![0];
-                                    return Text(
-                                      "$value%",
-                                      style: const TextStyle(
-                                          color: Colors.black,
-                                          fontSize: 80,
-                                          fontWeight: FontWeight.bold),
-                                    );
-                                  }),
-                            ),
-                          )
-                        : const Center(
-                            child: Padding(
-                              padding: EdgeInsets.all(50.0),
-                              child: SizedBox(
-                                child: Text(
-                                  "0%",
-                                  style: TextStyle(
-                                      color: Colors.black,
-                                      fontSize: 80,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                              ),
-                            ),
-                          ),
+                    BatteryLevelIndicator(state: state),
+                    // ThermometerLevels(state: state),
+                    const SizedBox(height: 50),
                     const Text(
-                      "Cloude Sync Data (update every 5 sec)",
+                      "Cloude Sync Data (update every 15 sec)",
                       style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.w600,
                           decoration: TextDecoration.underline),
                     ),
+
                     const SizedBox(height: 20),
-                    ListView.builder(
-                        itemCount: 2,
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        itemBuilder: (context, index) {
-                          return const Card(
-                            child: ListTile(
-                              title: Text("Battery Level"),
-                              subtitle: Text("Date time"),
-                              trailing: Text("20%"),
-                            ),
-                          );
-                        })
+                    const Text(
+                      "Battery Levels",
+                      style: TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    const CloudSyncBatteryLevelCard()
                   ],
                 ),
               ),
             ),
             bottomNavigationBar: Padding(
               padding: const EdgeInsets.all(8.0),
-              child: TextButton(
-                style: TextButton.styleFrom(
-                    backgroundColor: Colors.black,
-                    padding: const EdgeInsets.all(20)),
-                child: const Text(
-                  "Battery Levels",
-                  style: TextStyle(color: Colors.white),
-                ),
-                onPressed: () {
-                  provider.getWatchBatteryLevels();
-                },
+              child: Row(
+                children: [
+                  Expanded(
+                    child: TextButton(
+                      style: TextButton.styleFrom(
+                          backgroundColor: Colors.black,
+                          padding: const EdgeInsets.all(20)),
+                      child: const Text(
+                        "Thermometer Levels",
+                        style: TextStyle(color: Colors.white),
+                      ),
+                      onPressed: () {
+                        provider.getWatchBatteryLevels();
+                      },
+                    ),
+                  ),
+                  const SizedBox(width: 5),
+                  Expanded(
+                    child: TextButton(
+                      style: TextButton.styleFrom(
+                          backgroundColor: Colors.black,
+                          padding: const EdgeInsets.all(20)),
+                      child: const Text(
+                        "Battery Levels",
+                        style: TextStyle(color: Colors.white),
+                      ),
+                      onPressed: () {
+                        provider.notifyBatteryLevels();
+                      },
+                    ),
+                  ),
+                ],
               ),
             ),
           ),

@@ -1,26 +1,14 @@
-import 'dart:async';
-
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_ble_sample/bloc/BleDeviceBloc/ble_device_state.dart';
-import 'package:flutter_ble_sample/widgets/common_widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 
-class BleDeviceCubit extends Cubit<BleDeviceState> {
-  BleDeviceCubit() : super(BleDeviceState());
+class FirebaseCubit extends Cubit<BleDeviceState> {
+  FirebaseCubit() : super(BleDeviceState());
 
   final FlutterBlue flutterBlue = FlutterBlue.instance;
 
   List<BluetoothDevice> listOfDevices = [];
-
-  Timer? timer;
-
-  CollectionReference collectionRef(String collection) {
-    return FirebaseFirestore.instance.collection(collection);
-  }
-
-  CommonWidgets commonWidgets = CommonWidgets();
 
   ///  [Initiate Bluetooth Scanning Function]
 
@@ -37,7 +25,6 @@ class BleDeviceCubit extends Cubit<BleDeviceState> {
 
   Future connectToBluetoothDevice(BluetoothDevice device) async {
     flutterBlue.stopScan();
-    // device.disconnect();
     try {
       await device.connect();
     } catch (e) {
@@ -72,22 +59,8 @@ class BleDeviceCubit extends Cubit<BleDeviceState> {
   }
 
   /// [Background Function to Store Battery Levels to Cloude ]
-  /// [For testing purpose hardcoded the values]
 
-  syncBatteryLevelsToCloud(BuildContext context) {
-    commonWidgets.snackBar(context, "Cloud syncing will perform evey 15 sec !");
-    timer = Timer.periodic(const Duration(seconds: 15), (Timer t) {
-      collectionRef("batteryLevels")
-          .doc("5DG4qk2Kdpdf2xyiVDmi")
-          .set({"dateTime": DateTime.now(), "value": state.batteryLevel});
-    });
-  }
-
-  ///[Dispose Timer Instance]
-
-  void disposeTimerInstance() {
-    timer?.cancel();
-  }
+  syncBatteryLevelsToCloud() {}
 
   /// [Get Realtime Battery Levels from Cloud ]
 
