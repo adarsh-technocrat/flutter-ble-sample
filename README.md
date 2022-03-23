@@ -1,16 +1,18 @@
 # flutter_ble_sample
 
-A new Flutter project.
 
-## Getting Started
+ 
+Testing Mobile Device  
+ 
+https://user-images.githubusercontent.com/47661086/159641631-fe65f167-5417-401c-a930-6518616806a3.mp4
 
-This project is a starting point for a Flutter application.
 
-A few resources to get you started if this is your first Flutter project:
+Peripheral  stimulator Application 
+ 
+https://user-images.githubusercontent.com/47661086/159640403-6f1b5658-3900-4b45-bb51-6b98ee8c9454.mp4
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
+Peripheral  stimulator  Application Link  -   https://play.google.com/store/apps/details?id=io.github.webbluetoothcg.bletestperipheral&hl=en_IN&gl=US
 
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+
+
+
